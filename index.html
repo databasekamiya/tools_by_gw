@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="PouMods Official Tools - Dapatkan Source Code Website, fitur redeem unlimited limit, copy & download source dengan mudah.">
+  <meta name="keywords" content="PouMods, Tools, Source Code, Redeem, Unlimited, Copy Source, Download Source, Website Tools">
+  <meta name="author" content="PouMods Official">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="PouMods Official Tools - Get Source Code">
+  <meta property="og:description" content="Dapatkan source code website dengan mudah, redeem kode untuk unlock unlimited limit, copy & download source langsung.">
+  <meta property="og:image" content="https://files.catbox.moe/7j5cqk.jpg">
+  <meta property="og:url" content="https://tools.poumodss.my.id">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>PouMods Official Tools - Get Source Code</title>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas#bgCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+      background: #0d1117;
+    }
+    header {
+      background: rgba(22,27,34,0.95);
+      padding: 20px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      border-bottom: 1px solid #30363d;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      z-index: 5;
+    }
+    main { padding: 20px; max-width: 900px; margin: auto; position: relative; z-index: 5; }
+
+    .card {
+      background: rgba(22,27,34,0.95);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .card h2 { text-align: center; margin-top: 0; }
+
+    .form-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    input, button {
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-size: 15px;
+    }
+    input[type="text"] {
+      flex: 1;
+      min-width: 250px;
+      background: #0d1117;
+      color: #e6edf3;
+      border: 1px solid #30363d;
+    }
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #238636;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+    button:hover { transform: scale(1.05); opacity: 0.9; }
+    button:disabled { background: #444; cursor: not-allowed; opacity: 0.6; }
+    .btn-copy { background: #0969da; }
+    .btn-download { background: #b62324; }
+    .btn-back { background: #6c757d; }
+
+    pre {
+      background: #0d1117;
+      padding: 15px;
+      border-radius: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      min-height: 200px;
+      border: 1px solid #30363d;
+    }
+
+    .limit-box { text-align: center; margin: 10px 0; }
+    progress {
+      width: 100%; height: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    progress::-webkit-progress-bar { background: #30363d; }
+    progress::-webkit-progress-value { background: #238636; }
+    progress::-moz-progress-bar { background: #238636; }
+
+    .popup {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 999;
+    }
+    .popup-content {
+      background: #161b22;
+      padding: 25px;
+      border-radius: 18px;
+      text-align: center;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+      animation: fadeIn 0.4s ease-in-out;
+      position: relative;
+    }
+    .popup-content h2 { margin: 0 0 10px; }
+    .popup-content button {
+      background: #f39c12;
+      font-weight: bold;
+      padding: 12px 20px;
+    }
+    .popup-close {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #e6edf3;
+    }
+    .popup-close:hover { color: #f39c12; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .page { display: none; }
+    .page.active { display: block; }
+  </style>
+</head>
+<body>
+  <canvas id="bgCanvas"></canvas>
+
+  <header>
+    <i data-feather="code"></i> PouMods Official Tools - Get Source Code
+  </header>
+
+  <main>
+    <div id="page-main" class="page active card">
+      <h2>Masukkan URL</h2>
+      <div class="form-row">
+        <input type="text" id="url" placeholder="Contoh: https://example.com">
+        <button id="btnSource" onclick="getSource()"><i data-feather="search"></i> Lihat Source</button>
+        <button class="btn-copy" onclick="copySource()"><i data-feather="copy"></i> Salin</button>
+        <button class="btn-download" onclick="downloadSource()"><i data-feather="download"></i> Download</button>
+      </div>
+
+      <div class="limit-box">
+        <p id="limitInfo"><i data-feather="activity"></i> Limit: 0/10 digunakan</p>
+        <progress id="limitBar" value="0" max="10"></progress>
+        <p id="resetInfo"><i data-feather="clock"></i> Reset dalam: --:--:--</p>
+      </div>
+
+      <h2>Hasil</h2>
+      <pre id="output">Source code akan tampil di sini...</pre>
+    </div>
+
+    <div id="page-redeem" class="page card">
+  <h2><i data-feather="gift"></i> Redeem Kode</h2>
+  
+  <div class="form-row">
+    <input type="text" id="redeemCode" placeholder="Masukkan kode redeem">
+    <button onclick="redeemCode()"><i data-feather="check-circle"></i> Redeem</button>
+  </div>
+
+  <div style="text-align:center; margin:20px 0; padding:15px; border-radius:12px; background:rgba(36, 99, 235, 0.1); border:1px solid #238636;">
+    <h3 style="margin:0; color:#f39c12;"><i data-feather="zap"></i> Unlock Unlimited Limit</h3>
+    <p style="margin:8px 0; font-size:15px;">
+      Hanya dengan <b style="color:#2ecc71;">Rp 10.000</b> kamu bisa akses <b>Unlimited Limit</b> tanpa batas waktu! 🚀
+    </p>
+    <p style="margin:8px 0;">Hubungi Owner: <b>@PouSkibudi</b></p>
+    <button onclick="window.open('https://t.me/PouSkibudi','_blank')" style="background:#f39c12; color:#fff; padding:12px 20px; border-radius:10px; font-weight:bold; border:none; cursor:pointer; transition:0.3s;">
+      <i data-feather="send"></i> Beli Sekarang
+    </button>
+  </div>
+
+  <div style="text-align:center; margin-top:15px;">
+    <button class="btn-back" onclick="showPage('main')"><i data-feather="arrow-left"></i> Kembali</button>
+  </div>
+</div>
+
+    <audio id="bgMusic" autoplay loop>
+      <source src="https://files.catbox.moe/uuawoy.mp4" type="audio/mpeg">
+    </audio>
+    <div id="musicControl" style="text-align:center; margin-top:15px; display:none;">
+      <button onclick="playMusic()"><i data-feather='music'></i> Putar Musik</button>
+    </div>
+  </main>
+
+  <div id="promoPopup" class="popup">
+    <div class="popup-content">
+      <button class="popup-close" onclick="closePopup()"><i data-feather="x"></i></button>
+      <h2><i data-feather="star"></i> Promo Spesial!</h2>
+      <p>Redeem sekarang dan dapatkan <b><i data-feather="zap"></i> Unlimited Limit</b> penggunaan</p>
+      <button onclick="goToRedeem()"><i data-feather="gift"></i> Redeem Sekarang</button>
+    </div>
+  </div>
+
+  <script>
+    const blacklist = ["tools.poumodss.my.id"];
+    const LIMIT = 3;
+    const WAIT_TIME = 60 * 60 * 1000;
+
+    function getLimitData() {
+      const data = localStorage.getItem("sourceLimit");
+      return data ? JSON.parse(data) : { count: 0, resetTime: null, isUnlimited: false };
+    }
+    function saveLimitData(data) { localStorage.setItem("sourceLimit", JSON.stringify(data)); }
+
+    function formatTime(ms) {
+      const totalSeconds = Math.floor(ms / 1000);
+      const h = String(Math.floor(totalSeconds / 3600)).padStart(2,"0");
+      const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2,"0");
+      const s = String(totalSeconds % 60).padStart(2,"0");
+      return `${h}:${m}:${s}`;
+    }
+
+    function updateLimitUI() {
+      let data = getLimitData();
+      const now = Date.now();
+      const btn = document.getElementById("btnSource");
+
+      if (data.isUnlimited) {
+        document.getElementById("limitInfo").innerHTML = `<i data-feather="zap"></i> Mode Unlimited aktif!`;
+        document.getElementById("resetInfo").innerHTML = `<i data-feather="infinity"></i> Tidak ada batasan penggunaan.`;
+        document.getElementById("limitBar").style.display = "none";
+        btn.disabled = false;
+        feather.replace();
+        return;
+      }
+      if (data.resetTime && now >= data.resetTime) {
+        data = { count: 0, resetTime: null, isUnlimited: false };
+        saveLimitData(data);
+      }
+      document.getElementById("limitInfo").innerHTML = `<i data-feather="activity"></i> Limit: ${data.count}/${LIMIT} digunakan`;
+      document.getElementById("limitBar").value = data.count;
+      if (data.resetTime && now < data.resetTime) {
+        document.getElementById("resetInfo").innerHTML = `<i data-feather="clock"></i> Reset dalam: ${formatTime(data.resetTime - now)}`;
+        btn.disabled = true;
+      } else {
+        document.getElementById("resetInfo").innerHTML = `<i data-feather="check"></i> Limit tersedia`;
+        btn.disabled = false;
+      }
+      feather.replace();
+    }
+
+    async function getSource() {
+      const url = document.getElementById("url").value.trim();
+      const output = document.getElementById("output");
+      let data = getLimitData();
+      const now = Date.now();
+
+      if (!url) { output.textContent = "Masukkan URL terlebih dahulu!"; return; }
+      if (blacklist.some(domain => url.includes(domain))) {
+        output.textContent = "Website ini tidak diizinkan."; return;
+      }
+      try { new URL(url); } catch { output.textContent = "URL tidak valid!"; return; }
+
+      if (!data.isUnlimited) {
+        if (data.resetTime && now >= data.resetTime) {
+          data = { count: 0, resetTime: null, isUnlimited: false };
+        }
+        if (data.resetTime && now < data.resetTime) {
+          output.textContent = "Limit habis. Tunggu reset dalam 1 jam."; return;
+        }
+        if (data.count >= LIMIT) {
+          data.resetTime = now + WAIT_TIME;
+          saveLimitData(data); updateLimitUI();
+          output.textContent = "Limit habis. Tunggu reset dalam 1 jam."; return;
+        }
+        data.count++; saveLimitData(data); updateLimitUI();
+      }
+
+      output.textContent = "Mengambil source code...";
+      try {
+        const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+        const result = await response.json();
+        output.textContent = result.contents;
+      } catch { output.textContent = "Gagal mengambil source code."; }
+    }
+
+    function copySource() {
+      const text = document.getElementById("output").textContent;
+      if (text && text !== "Source code akan tampil di sini...") {
+        navigator.clipboard.writeText(text).then(() => alert("Source code berhasil disalin!"))
+        .catch(() => alert("Gagal menyalin. Silakan salin manual."));
+      } else alert("Tidak ada source code.");
+    }
+
+    function downloadSource() {
+      const text = document.getElementById("output").textContent;
+      if (text && text !== "Source code akan tampil di sini...") {
+        const blob = new Blob([text], { type: "text/html" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "source.html";
+        link.click();
+        URL.revokeObjectURL(link.href);
+      } else alert("Tidak ada source code.");
+    }
+
+    async function redeemCode() {
+      const code = document.getElementById("redeemCode").value.trim();
+      let data = getLimitData();
+
+      if (!code) {
+        alert("Masukkan kode redeem!");
+        return;
+      }
+
+      try {
+        const response = await fetch("https://raw.githubusercontent.com/databasekamiya/Pou_Tools/refs/heads/main/redeem.json");
+        if (!response.ok) throw new Error("HTTP Error " + response.status);
+
+        const codes = await response.json();
+        if (codes.includes(code)) {
+          data.isUnlimited = true; saveLimitData(data);
+          alert("✅ Redeem berhasil! Mode Unlimited aktif.");
+          updateLimitUI(); showPage('main');
+        } else {
+          alert("❌ Kode redeem salah atau tidak terdaftar.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("⚠️ Gagal memverifikasi kode redeem. Coba lagi.");
+      }
+    }
+
+    function showPage(page) {
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.getElementById("page-" + page).classList.add("active");
+    }
+    function goToRedeem() {
+      document.getElementById("promoPopup").style.display = "none";
+      showPage("redeem");
+    }
+    function closePopup() {
+      document.getElementById("promoPopup").style.display = "none";
+    }
+
+    function playMusic() {
+      const audio = document.getElementById("bgMusic");
+      audio.play().then(() => {
+        document.getElementById("musicControl").style.display = "none";
+      }).catch(() => {
+        document.getElementById("musicControl").style.display = "block";
+      });
+    }
+
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.radius = 2;
+        this.vx = (Math.random() - 0.5) * 1.5;
+        this.vy = (Math.random() - 0.5) * 1.5;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "#e6edf3";
+        ctx.fill();
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+      }
+    }
+
+    const particles = [];
+    for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach(p => { p.update(); p.draw(); });
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(200,200,200,${1 - dist / 120})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      particles.length = 0;
+      for (let i = 0; i < 80; i++) particles.push(new Particle());
+    });
+
+    window.onload = () => {
+      feather.replace();
+      if (!localStorage.getItem("popupShown")) {
+        document.getElementById("promoPopup").style.display = "flex";
+        localStorage.setItem("popupShown", "true");
+      }
+      updateLimitUI();
+      setInterval(updateLimitUI, 1000);
+      playMusic();
+    };
+  </script>
+</body>
+</html>
